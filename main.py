@@ -15,6 +15,7 @@ st.write(markets)
 filtered_df.drop(['Unnamed: 0','MSA/Submarket'],axis=1, inplace=True)
 
 p_df = filtered_df.T
+p_df.index = pd.to_datetime(p_df.index)
 p_df.columns = markets
 st.table(filtered_df)
 fig,x = plt.subplots(1,1)
