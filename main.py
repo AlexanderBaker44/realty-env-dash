@@ -1,18 +1,24 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
+
+model_files = os.listdir('models')
+
+model_files.sort()
 
 df = pd.read_csv('data/m_and_e_stacked.csv')
 df_supply = pd.read_excel('data/dallas_apartment_data_rent_sf.xlsx',sheet_name = 'Supply')
+market_list =list(set([str(i).split('_')[0] for i in df['MSA/Submarket']]))
+market_list.sort()
 
-
-
+market_dict = dict(zip(market_list,model_files))
 
 with st.sidebar:
-    page  = st.radio('Choose Page', ('Time Series','General Stats'))
+    page  = st.radio('Choose Page', ('Time Series','General Stats', 'Models'))
 
 if page == 'Time Series':
-    market_list =list(set([str(i).split('_')[0] for i in df['MSA/Submarket']]))
+
     market_selection = st.selectbox('Select Market', market_list)
     filtered_df = df[df['MSA/Submarket'].str.contains(market_selection)]
 
@@ -34,3 +40,17 @@ if page == 'General Stats':
     for i in df_supply_filtered.columns:
         values = list(df_supply_filtered[i])[0]
         st.subheader(f'{i}: {values}',divider =True)
+
+if page == 'Models':
+    market_selection = st.selectbox('Select Market', market_list)
+    market_file = market_dict[market_selection]
+    df_input = pd.read_csv(f'models/{market_file}')
+    df_selection = df_input[['ds','yhat','m']]
+    df_selection.index = pd.to_datetime(df_input['ds'])
+    df_selection.columns = ['ds','effective_rent','market_rent']
+    print(df_selection)
+    fig,(x1,x2) = plt.subplots(2,1)
+    fig.tight_layout(pad=1.0)
+    df_selection.plot(y='effective_rent',kind ='line',ax=x1, color = 'blue')
+    df_selection.plot(y='market_rent',kind ='line',ax=x2,color='red')
+    st.pyplot(fig)
