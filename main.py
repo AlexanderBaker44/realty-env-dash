@@ -27,6 +27,8 @@ if page == 'Time Series':
     p_df = filtered_df.T
     p_df.index = pd.to_datetime(p_df.index)
     p_df.columns = markets
+    st.markdown('## Markets Over Time:')
+    st.write('This page observes the historical data of both the market and effective rent.')
     fig,x = plt.subplots(1,1)
     p_df.plot(kind = 'line', ax=x)
     st.pyplot(fig)
@@ -37,6 +39,8 @@ if page == 'General Stats':
     market_list_pop = list(set(df_supply['MSA/Submarket']))
     market_selection_pop = st.selectbox('Select Market', market_list_pop,key = '1')
     df_supply_filtered = df_supply[df_supply['MSA/Submarket'] == market_selection_pop]
+    st.markdown('## Market Metrics:')
+    st.markdown('This page displays the additional overall metrics of each market.')
     for i in df_supply_filtered.columns:
         values = list(df_supply_filtered[i])[0]
         st.subheader(f'{i}: {values}',divider =True)
@@ -49,6 +53,8 @@ if page == 'Models':
     df_selection.index = pd.to_datetime(df_input['ds'])
     df_selection.columns = ['ds','effective_rent','market_rent']
     print(df_selection)
+    st.markdown('## Facebook Prophet Models:')
+    st.markdown('This page displays the deconstructed results of the Facebook Prophet model. The model predicts the effective rent for a market, while the market rate is used as a feature.')
     fig,(x1,x2) = plt.subplots(2,1)
     fig.tight_layout(pad=1.0)
     df_selection.plot(y='effective_rent',kind ='line',ax=x1, color = 'blue')
