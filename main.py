@@ -33,8 +33,6 @@ if page == 'Time Series':
     p_df.plot(kind = 'line', ax=x)
     st.pyplot(fig)
 
-
-
 if page == 'General Stats':
     market_list_pop = list(set(df_supply['MSA/Submarket']))
     market_selection_pop = st.selectbox('Select Market', market_list_pop,key = '1')
