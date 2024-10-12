@@ -64,3 +64,21 @@ df_percent_plot.drop('MSA/Submarket',axis=1,inplace=True)
 df_percent_plot = df_percent_plot.T
 df_percent_plot.plot(kind = 'bar')
 st.pyplot()
+
+final_line_vel = df_vel_plot.tail(1)[f'{market_selection}_effective'].iloc[0]
+final_line_percent_change = df_percent_plot.tail(1)[f'{market_selection}_effective'].iloc[0]
+final_line_eff = df_eff_select_diff.tail(1).T.tail(1)['value_difference'].iloc[0]
+final_line_mar_eff_diff = df_full_selection.loc['eff_mar_difference'].T.tail(1).iloc[0]
+
+weight_vel_val = st.slider('weight velocity',0,100,key = '1')
+weight_per_val = st.slider('weight percent difference',0,100 - weight_vel_val,key ='2')
+weight_eff_val = st.slider('weight mean difference',0,100-(weight_vel_val+weight_per_val),key ='3')
+weight_eff_mar_diff_val = st.slider('weight mean difference',0,100-(weight_vel_val+weight_per_val+weight_eff_val),key = '4')
+
+print(final_line_mar_eff_diff)
+print(final_line_vel)
+print(final_line_percent_change)
+print(final_line_eff)
+
+total_val = weight_vel_val/100*final_line_vel+final_line_percent_change*weight_per_val/100+final_line_eff/100*weight_eff_val+weight_eff_mar_diff_val/100*final_line_mar_eff_diff
+st.write(total_val)
