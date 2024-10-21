@@ -108,6 +108,7 @@ if page == 'Total Rating':
     print(final_line_eff)
     try:
         total_val = weight_vel_val/100*final_line_vel+final_line_percent_change*weight_per_val/100+final_line_eff/100*weight_eff_val+weight_eff_mar_diff_val/100*final_line_mar_eff_diff
-        st.write(total_val)
+        total_val_formatted = round(total_val,5)
+        st.markdown(f' ## Weighted Value: {total_val_formatted}')
     except:
         st.write('Please Enter a Total of Four Weights')
