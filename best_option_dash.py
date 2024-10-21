@@ -43,12 +43,15 @@ with st.sidebar:
     page  = st.radio('Choose Page', ('Differences','Velocity', 'Percent Change','Total Rating'))
 
 
+
 if page == 'Differences':
+    st.title('Difference Plots')
     fig,[axe,axs] = plt.subplots(2,1)
-    df_mar_line['value_difference'].plot(kind = 'line',ax=axe)
+    df_mar_line['value_difference'].plot(kind = 'line',ax=axe,title = 'Difference Between Market Means and Values Over Time', xlabel = 'Time',ylabel = 'Value Difference')
 
     df_eff_line['value_difference'].plot(kind = 'line',ax=axe)
-    dff_line.plot(kind = 'line',ax=axs)
+    axe.legend(labels = ['value_difference_market','value_difference_effective'])
+    dff_line.plot(kind = 'line',ax=axs, title = 'Difference Between Market and Effective Rates Over Time', xlabel = 'Time',ylabel = 'Market and Effective Difference')
     fig.tight_layout(pad=1.0)
     st.pyplot(fig)
 
@@ -63,9 +66,10 @@ df_vel_plot.drop('MSA/Submarket',axis=1,inplace=True)
 df_vel_plot = df_vel_plot.T
 
 if page == 'Velocity':
+    st.title('Velocity Plot')
     fig2, ax5 = plt.subplots()
 
-    df_vel_plot.plot(kind = 'bar',ax=ax5)
+    df_vel_plot.plot(kind = 'bar',ax=ax5, title = 'Market and Effective Rate Velocity Over Time', xlabel = 'Time',ylabel = 'Value Velocity')
     st.pyplot(fig2)
 
 df_percent_filter = df_percent[df_percent['MSA/Submarket'].str.contains(market_selection)]
@@ -75,9 +79,10 @@ df_percent_plot.drop('MSA/Submarket',axis=1,inplace=True)
 df_percent_plot = df_percent_plot.T
 
 if page == 'Percent Change':
+    st.title('Percent Change')
     fig3, ax6 = plt.subplots()
 
-    df_percent_plot.plot(kind = 'bar',ax=ax6)
+    df_percent_plot.plot(kind = 'bar',ax=ax6, title = 'Market and Effective Rate Percent Change Over Time', xlabel = 'Time',ylabel = 'Percent Change')
     st.pyplot(fig3)
 
 final_line_vel = df_vel_plot.tail(1)[f'{market_selection}_effective'].iloc[0]
@@ -88,13 +93,14 @@ final_line_mar_eff_diff = df_full_selection.loc['eff_mar_difference'].T.tail(1).
 
 
 if page == 'Total Rating':
-    weight_vel_val = st.slider('weight velocity',0,100,key = '1')
+    st.title('Select Weight for Each Factor')
+    weight_vel_val = st.slider('Select weight of the latest effective velocity',0,100,key = '1')
 
-    weight_per_val = st.slider('weight percent difference',0,100,key ='2')
+    weight_per_val = st.slider('Select weight of the latest effective percent difference',0,100,key ='2')
 
-    weight_eff_val = st.slider('weight mean difference',0,100,key ='3')
+    weight_eff_val = st.slider('Select weight of the latest effective mean difference',0,100,key ='3')
 
-    weight_eff_mar_diff_val = st.slider('weight mean difference',0,100,key = '4')
+    weight_eff_mar_diff_val = st.slider('Select weight of the latest effective and market difference',0,100,key = '4')
 
     print(final_line_mar_eff_diff)
     print(final_line_vel)
