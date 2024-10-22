@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 df_market = pd.read_csv('data/edited_market.csv')
 df_effective = pd.read_csv('data/edited_effective.csv')
+df_supply = pd.read_excel('data/dallas_apartment_data_rent_sf.xlsx',sheet_name = 'Supply')
 
 df_market.drop('index',axis = 1, inplace=True)
 df_effective.drop('index',axis = 1, inplace=True)
@@ -91,6 +92,11 @@ final_line_eff = df_eff_select_diff.tail(1).T.tail(1)['value_difference'].iloc[0
 final_line_mar_eff_diff = df_full_selection.loc['eff_mar_difference'].T.tail(1).iloc[0]
 
 
+supply_data = df_supply[df_supply['MSA/Submarket'] == market_selection]
+print(supply_data.columns)
+net_absorption = supply_data['2024 Net Absorption (YTD)'].iloc[0]
+net_delivery = supply_data['2024 Deliveries (YTD)'].iloc[0]
+total_units = supply_data['Total Units '].iloc[0]
 
 if page == 'Total Rating':
     st.title('Select Weight for Each Factor')
@@ -102,12 +108,23 @@ if page == 'Total Rating':
 
     weight_eff_mar_diff_val = st.slider('Select weight of the latest effective and market difference',0,100,key = '4')
 
+    weight_net_absorption_val = st.slider('Select weight of the 2024 net asorption',0,100,key = '5')
+
+    weight_net_delivery_val = st.slider('Select weight of the 2024 net delivery',0,100,key = '6')
+
+    total_units_weight_val = st.slider('Select total unit weight',0,100,key = '7')
+
     print(final_line_mar_eff_diff)
     print(final_line_vel)
     print(final_line_percent_change)
     print(final_line_eff)
+    print(net_absorption)
     try:
-        total_val = weight_vel_val/100*final_line_vel+final_line_percent_change*weight_per_val/100+final_line_eff/100*weight_eff_val+weight_eff_mar_diff_val/100*final_line_mar_eff_diff
+        total_val = weight_vel_val/100*final_line_vel+final_line_percent_change*weight_per_val/100+\
+        final_line_eff/100*weight_eff_val+weight_eff_mar_diff_val/100*final_line_mar_eff_diff+\
+        weight_net_absorption_val/100*net_absorption+weight_net_delivery_val/100*net_delivery+\
+        total_units*1/1000*total_units_weight_val/100
+
         total_val_formatted = round(total_val,5)
         st.markdown(f' ## Weighted Value: {total_val_formatted}')
     except:
